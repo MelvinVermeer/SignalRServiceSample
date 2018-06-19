@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>SignalR Service Sample</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <form>
+        <input id="message" type="text" />
+        <input id="send" type="button" value="send" />
+    </form>
+
+    <ul id="messages"></ul>
+
+    <script src="//cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0/dist/browser/signalr.min.js"></script>
+
+    <script>
+        (async function () {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/chat')
+                .build();
+
+            document.getElementById('send').addEventListener('click', _ => {
+                connection.invoke('Send', getMessage())
+                clearInput()
+            })
+
+            connection.on("Receive", addMessageToList)
+            await connection.start()
+        }())
+
+        function addMessageToList(message) {
+            document.getElementById('messages').innerHTML += `<li>${message}</li>`
+        }
+
+        function clearInput() {
+            document.querySelector('form').reset()
+        }
+        
+        function getMessage() {
+            return document.getElementById('message').value
+        }
+    </script>
+</body>
+
+</html>

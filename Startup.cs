@@ -8,13 +8,17 @@ namespace SampleSignalRService
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSignalR();
+            services.AddSignalR()
+                    .AddAzureSignalR(options => 
+                    {
+                        options.ConnectionString = "Endpoint=<yourconnectionstring>";
+                    });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseFileServer();
-            app.UseSignalR(routes => {
+            app.UseAzureSignalR(routes => {
                 routes.MapHub<ChatHub>("/chat");
             });
         }
